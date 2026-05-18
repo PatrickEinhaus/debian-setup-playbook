@@ -1,0 +1,33 @@
+---
+- name: System und User Setup
+  hosts: test
+  remote_user: patrick
+  become: true
+  become_method: su
+  become_user: root
+  roles:
+    #- role: bootstrap-keys    # SSH Key hinterlegen
+    #  tags: bootstrap-keys    
+    
+    - role: system-update     # sudo installieren
+      tags: system-update   
+    
+    - role: user-setup
+      tags: user-setup
+
+- name: Setup (als patrick mit Key und Sudo)
+  hosts: test
+  become: true
+  remote_user: patrick
+  roles:
+    - role: ssh-hardening     
+      tags: ssh-hardening
+    
+    - role: zsh-setup        
+      tags: zsh-setup
+    
+    - role: docker
+      tags: docker
+    
+    - role: minikube
+      tags: minikube

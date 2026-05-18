@@ -1,0 +1,38 @@
+---
+#Für dieses Playbook nicht mehr nötig. Für eventuelle use cases erstmal drin gelassen
+#- name: Benutzer erstellen
+#  ansible.builtin.user:
+#    name: "{{ new_user }}"
+#    password: "{{ new_user_password | password_hash('sha512') }}"
+#    shell: "{{ new_user_shell }}"
+#    create_home: true
+#    state: present
+
+- name: .ssh Verzeichnis erstellen
+  ansible.builtin.file:
+    path: "/home/{{ new_user }}/.ssh"
+    state: directory
+    owner: "{{ new_user }}"
+    group: "{{ new_user }}"
+    mode: "0700"
+
+- name: SSH Public Key hinterlegen
+  ansible.posix.authorized_key:
+    user: "{{ new_user }}"
+    key: "{{ vault_ssh_public_key }}"
+    state: present
+
+- name: Benutzer zur sudo-Gruppe hinzufügen
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    groups: sudo
+    append: true
+
+# Auskommentieren wenn Passwort beim sudo gewünscht ist
+- name: Passwordloses sudo für Benutzer einrichten 
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: "{{ new_user }} ALL=(ALL) NOPASSWD:ALL"
+    create: true
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"

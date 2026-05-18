@@ -1,0 +1,53 @@
+---
+- name: kubectl installieren
+  ansible.builtin.get_url:
+    url: "https://dl.k8s.io/release/{{ kubectl_version.stdout }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: "0755"
+  vars:
+    kubectl_version:
+      stdout: "{{ lookup('url', 'https://dl.k8s.io/release/stable.txt') }}"
+
+- name: kubectl-Version prüfen
+  ansible.builtin.command: kubectl version --client
+  register: kubectl_check
+  changed_when: false
+  ignore_errors: true
+    
+- name: Minikube Binary herunterladen
+  ansible.builtin.get_url:
+    url: "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
+    dest: /tmp/minikube-linux-amd64
+
+- name: Minikube installieren
+  ansible.builtin.command: install /tmp/minikube-linux-amd64 /usr/local/bin/minikube
+  args:
+    creates: /usr/local/bin/minikube
+
+- name: Minikube temp Datei entfernen
+  ansible.builtin.file:
+    path: /tmp/minikube-linux-amd64
+    state: absent
+    
+- name: Minikube-Version prüfen
+  ansible.builtin.command: minikube version
+  register: minikube_check
+  changed_when: false
+  ignore_errors: true
+
+- name: Minikube Info anzeigen
+  ansible.builtin.debug:
+    msg: "{{ minikube_check.stdout }}"
+  when: minikube_check.rc == 0
+
+- name: Minikube Completion für ZSH einrichten
+  ansible.builtin.shell: minikube completion zsh > /usr/local/share/zsh/site-functions/_minikube
+  args:
+    creates: /usr/local/share/zsh/site-functions/_minikube
+  ignore_errors: true
+
+- name: kubectl Completion für ZSH einrichten
+  ansible.builtin.shell: kubectl completion zsh > /usr/local/share/zsh/site-functions/_kubectl
+  args:
+    creates: /usr/local/share/zsh/site-functions/_kubectl
+  ignore_errors: true

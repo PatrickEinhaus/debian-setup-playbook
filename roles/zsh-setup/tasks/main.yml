@@ -1,0 +1,48 @@
+---
+- name: ZSH installieren
+  ansible.builtin.apt:
+    name: zsh
+    state: present
+
+- name: Oh-My-Zsh für neuen Benutzer installieren
+  become: true
+  become_user: "{{ new_user }}"
+  shell: >
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  args:
+    creates: "/home/{{ new_user }}/.oh-my-zsh"
+
+
+- name: ZSH als Standard-Shell für neuen Benutzer setzen
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    shell: /bin/zsh
+
+- name: ZSH als Standard-Shell für root setzen (optional)
+  ansible.builtin.user:
+    name: root
+    shell: /bin/zsh
+
+- name: zsh-autosuggestions Plugin installieren
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: "/home/{{ new_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    depth: 1
+  become: true
+  become_user: "{{ new_user }}"
+
+- name: zsh-syntax-highlighting Plugin installieren
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting
+    dest: "/home/{{ new_user }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    depth: 1
+  become: true
+  become_user: "{{ new_user }}"
+
+- name: .zshrc config
+  ansible.builtin.template:
+    src: myzshrc.j2
+    dest: "/home/{{ new_user }}/.zshrc"
+    owner: "{{ new_user }}"
+    group: "{{ new_user }}"
+    mode: "0644"

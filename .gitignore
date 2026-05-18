@@ -1,0 +1,23 @@
+# Sicherheits-relevante Dateien nicht committen
+*.pem
+*.key
+*.crt
+*private*
+*secret*
+
+# Ansible
+*.retry
+
+# Echte IPs nicht committen
+inventory/inventory.ini
+
+# PWs und Keys nicht committen
+group_vars/all/vault.yml              
+
+# Lokale Umgebung
+.env
+*.local
+
+# OS
+.DS_Store
+Thumbs.db

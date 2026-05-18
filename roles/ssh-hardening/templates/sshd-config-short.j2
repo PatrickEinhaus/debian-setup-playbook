@@ -1,0 +1,34 @@
+# Ansible-managed sshd_config
+
+Port {{ ssh_port }}
+AddressFamily any
+ListenAddress 0.0.0.0
+
+# Authentifizierung
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+
+# Sicherheits-Einstellungen
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding no
+PrintMotd no
+
+# Verbindungs-Stabilität
+ClientAliveInterval 120
+ClientAliveCountMax 3
+MaxAuthTries 3
+MaxSessions 10
+
+# Erlaubte Benutzer
+AllowUsers {{ new_user }}
+
+# Logging
+SyslogFacility AUTH
+LogLevel INFO
+
+# SFTP Subsystem
+Subsystem sftp /usr/lib/openssh/sftp-server

@@ -1,0 +1,25 @@
+---
+# Benutzer-Konfiguration 
+new_user: "test"
+new_user_password: "{{ vault_user_password }}"   
+#new_user_shell: "/bin/zsh"                        # wird aktuell nicht verwendet (user-setup role)
+
+#  SSH-Konfiguration 
+#ssh_public_key: "{{ vault_ssh_public_key }}"      # erscheint unnötig lieber direkt aus vault aufrufen
+ssh_port: 22
+
+# Docker
+docker_compose_version: "v2.27.0"
+
+# Minikube 
+minikube_version: "latest"
+minikube_driver: "docker"
+
+# ZSH / Oh-My-Zsh
+ohmyzsh_theme: "crcandy"
+ohmyzsh_plugins:
+  - git
+  - docker
+  - kubectl
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
