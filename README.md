@@ -61,7 +61,7 @@ nano inventory/inventory.ini
 
 ## Ausführen
 
-### Erstmalig (mit Root-Passwort, bevor SSH gehärtet ist)
+### Erstes mal ausführen (mit Root-Passwort, bevor SSH gehärtet ist)
 ```bash
 ansible-playbook site.yml -i inventory/inventory.ini \
   --ask-pass \
